@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+<resources>
+
+    <declare-styleable name="TextInputLayout">
+        <attr name="hintTextAppearance" format="reference"/>
+        <!-- The hint to display in the floating label -->
+        <attr name="android:hint"/>
+        <!-- Whether the layout's floating label functionality is enabled -->
+        <attr name="hintEnabled" format="boolean"/>
+        <!-- Whether the layout is laid out as if an error will be displayed -->
+        <attr name="errorEnabled" format="boolean"/>
+        <!-- TextAppearance of any error message displayed -->
+        <attr name="errorTextAppearance" format="reference"/>
+        <!-- Whether the layout is laid out as if the character counter will be displayed -->
+        <attr name="counterEnabled" format="boolean"/>
+        <!-- The max length to display in the character counter -->
+        <attr name="counterMaxLength" format="integer" />
+        <!-- TextAppearance of the character counter -->
+        <attr name="counterTextAppearance" format="reference"/>
+        <!-- TextAppearance of the character counter when the text is longer than the max -->
+        <attr name="counterOverflowTextAppearance" format="reference"/>
+        <attr name="android:textColorHint"/>
+        <!-- Whether to animate hint state changes. -->
+        <attr name="hintAnimationEnabled" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="DesignTheme">
+        <!-- Theme to use for modal bottom sheet dialogs spawned from this theme. -->
+        <attr name="bottomSheetDialogTheme" format="reference" />
+        <!-- Style to use for modal bottom sheets in this theme. -->
+        <attr name="bottomSheetStyle" format="reference" />
+
+        <!-- Text color used to indicate an error has occurred. -->
+        <attr name="textColorError" format="color" />
+    </declare-styleable>
+</resources>
+
