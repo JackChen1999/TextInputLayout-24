@@ -3,6 +3,7 @@
 TextInputLayout：继承LinearLayout，用于盛放EditText。
 CollapsingTextHelper：处理hint文字收起和展开动画。
 相关的类我已经从design里面抽取出来了：
+
 ![](class.png)
 
 
@@ -10,7 +11,9 @@ CollapsingTextHelper：处理hint文字收起和展开动画。
 
 ####结构和使用方法
 演示如下：
+
 ![](demo.gif)
+
 使用的时候是外层TextInputLayout包裹一个EditText如下：
 ```
     <demo.design.TextInputLayout
@@ -25,6 +28,7 @@ CollapsingTextHelper：处理hint文字收起和展开动画。
     </demo.design.TextInputLayout>
 ```
 简单的结构图如下：
+
 ![](struct.png)
 
 ####具体的源码分析
@@ -172,6 +176,7 @@ private void setEditText(EditText editText) {
     }
 ```
 动画实现的流程如下图：
+
 ![](anim.png)
 
 
@@ -252,6 +257,7 @@ private void calculateOffsets(final float fraction) {
 ```
 
 上面计算颜色使用的是这个函数，可以用来做两个颜色之间的渐变，对A,R,G,B分别做处理，原生系统也有这个ArgbEvaluator，实现基本是一样的。
+
 ```
     private static int blendColors(int color1, int color2, float ratio) {
         final float inverseRatio = 1f - ratio;
@@ -264,6 +270,7 @@ private void calculateOffsets(final float fraction) {
 ```
 
 动画过程是在draw里面实现的，绘制分两种情况 ：1、hint文字收起和展开的文字大小差不多，即缩放比例为1，使用mTextPaint绘制文字即可。2、缩放的比例不为1，则需要把hint文字生成bitmap再通过改变bitmap的区域大小进行缩放。：
+
 ```
 public void draw(Canvas canvas) {
         final int saveCount = canvas.save();
@@ -309,11 +316,18 @@ public void draw(Canvas canvas) {
         canvas.restoreToCount(saveCount);
     }
 ```
+
 ####总结
 TextInputLayout是一个比较简单的库，不过动画的部分实现的比较复杂，优点也是有很多的，不过还是发现了一部分的缺点 ：)。
+
 缺点：
+
 1、无法设置/获取上面文字的颜色，大小，间距等，下面的错误提示内容也是一样无法设置。
+
 2、无法设置动画时间，在代码里写死了。
+
 3、显示错误提示后高度会变化。
+
 4、显示文字个数会，超出后闪退。
+
 5、如果包含的edittext有android:layout_marginLeft="10dp" ，这样布局有问题，这个修改有做备注。
