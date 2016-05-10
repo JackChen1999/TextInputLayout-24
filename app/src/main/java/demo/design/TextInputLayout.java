@@ -290,7 +290,7 @@ public class TextInputLayout extends LinearLayout {
             }
             mTmpPaint.setTypeface(mCollapsingTextHelper.getCollapsedTypeface());
             mTmpPaint.setTextSize(mCollapsingTextHelper.getCollapsedTextSize());
-            llp.topMargin = (int) -mTmpPaint.ascent();
+            llp.topMargin = (int) -mTmpPaint.ascent();//这里是上面提示文字的区域的高度 llp.topMargin
         } else {
             llp.topMargin = 0;
         }
@@ -447,6 +447,8 @@ public class TextInputLayout extends LinearLayout {
             // Add a flexible spacer in the middle so that the left/right views stay pinned
             final Space spacer = new Space(getContext());
             final LayoutParams spacerLp = new LayoutParams(0, 0, 1f);
+            //这里是添加下面错误提示view，在这里需要把edittext的layout_marginLeft或者layout_marginRight计算进去
+            //希望之后的版本能够改进
             mIndicatorArea.addView(spacer, spacerLp);
 
             if (mEditText != null) {

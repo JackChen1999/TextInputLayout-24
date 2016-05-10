@@ -17,6 +17,8 @@
         <demo.design.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:paddingLeft="6dp"
             android:hint="测试文字测速古" />
     </demo.design.TextInputLayout>
 
