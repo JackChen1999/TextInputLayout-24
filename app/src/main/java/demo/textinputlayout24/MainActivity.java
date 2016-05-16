@@ -33,10 +33,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 textInputLayout.setError("error "+s.length());
-                if(s.length() % 2 == 0)
-                    textInputLayout.setErrorEnabled(true);
-                else
-                    textInputLayout.setErrorEnabled(false);
+//                if(s.length() % 2 == 0)
+//                    textInputLayout.setErrorEnabled(false);
+//                else
+//                    textInputLayout.setErrorEnabled(false);
 
             }
         });
