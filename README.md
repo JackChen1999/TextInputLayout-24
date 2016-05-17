@@ -9,7 +9,9 @@ TextInputLayout 是android support design库里的一个控件，本文介绍的
 ![](class.png)
 
 里面最主要的有两个类：
+
 TextInputLayout：继承LinearLayout，用于盛放EditText，主要的容器。
+
 CollapsingTextHelper：处理hint文字收起和展开动画。
 
 - - -
@@ -315,7 +317,11 @@ private void calculateOffsets(final float fraction) {
     }
 ```
 
-上面刷新界面就是会触发draw绘制，动画的最终实现是在draw里面，绘制分两种情况 ：1、hint文字收起和展开的文字大小差不多，即缩放比例为1，使用mTextPaint绘制文字即可。2、缩放的比例不为1，则需要把hint文字生成bitmap再通过改变bitmap的区域大小进行缩放。：
+上面刷新界面就是会触发draw绘制，动画的最终实现是在draw里面，绘制分两种情况 ：
+
+1、hint文字收起和展开的文字大小差不多，即缩放比例为1，使用mTextPaint绘制文字即可。
+
+2、缩放的比例不为1，则需要把hint文字生成bitmap再通过改变bitmap的区域大小进行缩放。：
 ```
 public void draw(Canvas canvas) {
         final int saveCount = canvas.save();
@@ -424,9 +430,15 @@ addIndicator里面用添加view，index为位置，如果为错误提示View的�
 setCounterEnabled和上面setErrorEnable是一样的，这里就不再赘述了。至此，TextInputLayout大部分相关的东西基本都介绍完了。
 
 #### 4、总结
+
 TextInputLayout是一个比较简单的控件，不过动画的部分实现的比较复杂，优点就不了下面讲一下发现的一部分缺点。
+
 1、无法设置/获取上面文字的颜色，大小，间距等，下面的错误提示内容也是一样无法设置。
+
 2、无法设置动画时间，在代码里写死了。
+
 3、显示错误提示后高度会变化。
+
 4、显示文字个数会，超出后闪退。
+
 5、如果包含的edittext有android:layout_marginLeft="10dp" ，这样布局有问题，这个修改有做备注。
