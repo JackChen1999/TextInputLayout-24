@@ -5,6 +5,7 @@ TextInputLayout 是android support design库里的一个控件，本文介绍的
 
 #### 2、相关类：
 相关的类我已经从design里面抽取出来了，具体可以看demo的内容：
+
 ![](class.png)
 
 里面最主要的有两个类：
@@ -15,7 +16,9 @@ CollapsingTextHelper：处理hint文字收起和展开动画。
 
 #### 3、结构和使用方法
 演示如下：
+
 ![](demo.gif)
+
 使用的时候是外层TextInputLayout包裹一个EditText如下：
 ```
     <demo.design.TextInputLayout
@@ -30,6 +33,7 @@ CollapsingTextHelper：处理hint文字收起和展开动画。
     </demo.design.TextInputLayout>
 ```
 简单的结构图如下：
+
 ![](struct.png)
 
 #### 4、具体的源码分析
@@ -199,6 +203,7 @@ updateLabelState是更新上面提示文本的状态，animate参数是否有动
     }
 ```
 动画实现的流程如下图：
+
 ![](anim.png)
 
 
@@ -416,11 +421,10 @@ addIndicator里面用添加view，index为位置，如果为错误提示View的�
     }
 ```
 
-setCounterEnabled和上面setErrorEnable是一样的，这里就不再赘述了。至此，TextInputLayout大部分相关的东西基本都介绍完了，希望大家看得懂～
+setCounterEnabled和上面setErrorEnable是一样的，这里就不再赘述了。至此，TextInputLayout大部分相关的东西基本都介绍完了。
 
 #### 4、总结
-TextInputLayout是一个比较简单的库，不过动画的部分实现的比较复杂，优点也是有很多的，不过还是发现了一部分的缺点 ：)。
-缺点：
+TextInputLayout是一个比较简单的控件，不过动画的部分实现的比较复杂，优点就不了下面讲一下发现的一部分缺点。
 1、无法设置/获取上面文字的颜色，大小，间距等，下面的错误提示内容也是一样无法设置。
 2、无法设置动画时间，在代码里写死了。
 3、显示错误提示后高度会变化。
