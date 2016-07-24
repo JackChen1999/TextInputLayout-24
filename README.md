@@ -22,7 +22,7 @@ CollapsingTextHelper：处理hint文字收起和展开动画。
 ![](demo.gif)
 
 使用的时候是外层TextInputLayout包裹一个EditText如下：
-```
+```xml
     <demo.design.TextInputLayout
         android:id="@+id/inputlayout"
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@ CollapsingTextHelper：处理hint文字收起和展开动画。
 
 #### 4、具体的源码分析
 布局文件里TextInputLayout里包含了EditText，现在从加载EditText开始研究，TextInputLayout里面重写了addView，初始化的时候调用updateEditTextMargin设置上面需要预留的空间，用于hint做动画，再setEditText把EditText设置进去：
-```
+```java
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         if (child instanceof EditText) {
@@ -54,7 +54,7 @@ CollapsingTextHelper：处理hint文字收起和展开动画。
 ```
 updateEditTextMargin里面所做的操作，由于上面显示的内容不是view，所以距离需要通过文字的高度计算，上面预留的位置为动画画笔的ascent高度，所以这里有点坑，这个高度没办法定制，而且外部没办法拿到，如果需要用到的话只能自己修改代码了。
 
-```
+```java
     private LayoutParams updateEditTextMargin(ViewGroup.LayoutParams lp) {
         // Create/update the LayoutParams so that we can add enough top margin
         // to the EditText so make room for the label
@@ -76,7 +76,7 @@ updateEditTextMargin里面所做的操作，由于上面显示的内容不是vie
 ```
 
 在setEditText里面初始化EditText相关的东西，以及mCollapsingTextHelper动画相关的参数，字体，字体大小等等。而且设置了一个TextWatcher，用于监听字数的变化。
-```
+```java
 private void setEditText(EditText editText) {
         // If we already have an EditText, throw an exception
         if (mEditText != null) {
@@ -142,7 +142,7 @@ private void setEditText(EditText editText) {
 ```
 
 addView结束后再看看onLayout里面做了些啥，之前说过动画是在CollapsingTextHelper里面完成的，这里onLayout初始化mCollapsingTextHelper里面做动画的两个状态区域的大小，一个是展开的，一个是收起的，因为做动画是一般都使用文字生成bitmap后再进行缩放的，为什么是一般呢，因为特殊情况是不使用bitmap的后面介绍。
-```
+```java
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
@@ -168,7 +168,7 @@ addView结束后再看看onLayout里面做了些啥，之前说过动画是在Co
 ```
 
 onLayout后，基本上就完成了初始化的工作了，显示的时候都是比较正常的，就是一个EditTExt，来看看焦点改变的时候动画是怎么完成的，点击的时候hint文字会向上移动的动画，触发是在refreshDrawableState里面的updateLabelState：
-```
+```java
     @Override
     public void refreshDrawableState() {
         super.refreshDrawableState();
@@ -177,7 +177,7 @@ onLayout后，基本上就完成了初始化的工作了，显示的时候都是
     }
 ```
 updateLabelState是更新上面提示文本的状态，animate参数是否有动画过渡，通过获取背景drawable的statelist判断当前的focus状态，再通过这个状态判断是否做动画。
-```
+```java
     private void updateLabelState(boolean animate) {
         final boolean hasText = mEditText != null && !TextUtils.isEmpty(mEditText.getText());
         final boolean isFocused = arrayContains(getDrawableState(), android.R.attr.state_focused);
@@ -211,7 +211,7 @@ updateLabelState是更新上面提示文本的状态，animate参数是否有动
 
 collapseHint和expandHint基本上是一样的，只是最终的状态不一样，如果没有动画就直接调用mCollapsingTextHelper.setExpansionFraction()方法设置好最终状态；如果有动画，也是通过这个方法设置，只是在UpdateListener里面通过获取动画进行的百分比再设置对应的位置。
 
-```
+```java
     private void collapseHint(boolean animate) {
         if (mAnimator != null && mAnimator.isRunning()) {
             mAnimator.cancel();
@@ -255,7 +255,7 @@ collapseHint和expandHint基本上是一样的，只是最终的状态不一样�
 ```
 setExpansionFraction比较简单的,设置了当前动画的百分比。
 
-```
+```java
     /**
      * Set the value indicating the current scroll value. This decides how much of the
      * background will be displayed, as well as the title metrics/positioning.
@@ -276,7 +276,7 @@ setExpansionFraction比较简单的,设置了当前动画的百分比。
 从上面setExpansionFraction一步步的调用过程： setExpansionFraction->calculateCurrentOffsets->calculateOffsets；
 函数calculateOffsets通过传入的fraction计算当前画笔的textsize，color，ShadowLayer等参数。然后调用postInvalidateOnAnimation刷新界面。
 
-```
+```java
 private void calculateOffsets(final float fraction) {
         interpolateBounds(fraction);
         mCurrentDrawX = lerp(mExpandedDrawX, mCollapsedDrawX, fraction,
@@ -306,7 +306,7 @@ private void calculateOffsets(final float fraction) {
 ```
 
 补充一下，上面计算颜色使用的是这个函数，可以用来做两个颜色之间的渐变，对A,R,G,B分别做处理，原生系统也有这个ArgbEvaluator，实现基本是一样的。
-```
+```java
     private static int blendColors(int color1, int color2, float ratio) {
         final float inverseRatio = 1f - ratio;
         float a = (Color.alpha(color1) * inverseRatio) + (Color.alpha(color2) * ratio);
@@ -322,7 +322,7 @@ private void calculateOffsets(final float fraction) {
 1、hint文字收起和展开的文字大小差不多，即缩放比例为1，使用mTextPaint绘制文字即可。
 
 2、缩放的比例不为1，则需要把hint文字生成bitmap再通过改变bitmap的区域大小进行缩放。：
-```
+```java
 public void draw(Canvas canvas) {
         final int saveCount = canvas.save();
 
@@ -367,8 +367,8 @@ public void draw(Canvas canvas) {
         canvas.restoreToCount(saveCount);
     }
 ```
-到这里动画的部分就介绍完了。接着介绍错误提示框是怎么加载进去的,通过setErrorEnabled可以设置是否显示错误提示，但是如果直接调用setError(@Nullable final CharSequence error)，会默认调用setErrorEnabled(true)打开错误提示。当设置为true的时候会先new 一个TextView再把textView添加到底栏的LinearLayout里面。如果为false的话，会把ErrorView移除，移除。。所以如果true和false来会切，会导致布局跳动。坑：
-```
+到这里动画的部分就介绍完了。接着介绍错误提示框是怎么加载进去的,通过setErrorEnabled可以设置是否显示错误提示，但是如果直接调用setError(@Nullable final CharSequence error)，会默认调用setErrorEnabled(true)打开错误提示。当设置为true的时候会先new 一个TextView再把textView添加到底栏的LinearLayout里面。如果为false的话，会把ErrorView移除，移除。。所以如果true和false来回切，会导致布局跳动..这真是个大坑，视觉UI绝对不会允许这种跳跃：
+```java
 public void setErrorEnabled(boolean enabled) {
         if (mErrorEnabled != enabled) {
             if (mErrorView != null) {
@@ -400,9 +400,9 @@ public void setErrorEnabled(boolean enabled) {
             mErrorEnabled = enabled;
         }
 ```
-addIndicator里面用添加view，index为位置，如果为错误提示View的话就加到前面，如果为计数器的话就加到后面。这里也是简单的LinearLayout加载View，这里有个地方可以改进，TextView的layoutParams可以拿到EditText的layoutParams这样可以让布局对齐。
+addIndicator里面用添加view，index为位置，如果为错误提示View的话就加到前面，如果为计数器的话就加到后面。这里也是简单的LinearLayout加载View，不过如果设置了margin就会出现error文字偏移的问题，就像上面演示的图那种情况。所以这里可以改进，我这边的修改是TextView的layoutParams通过获取EditText的layoutParams来设置，让布局对齐。
 
-```
+```java
     private void addIndicator(TextView indicator, int index) {
         if (mIndicatorArea == null) {
             mIndicatorArea = new LinearLayout(getContext());
@@ -431,7 +431,7 @@ setCounterEnabled和上面setErrorEnable是一样的，这里就不再赘述了�
 
 #### 4、总结
 
-TextInputLayout是一个比较简单的控件，不过动画的部分实现的比较复杂，优点就不了下面讲一下发现的一部分缺点。
+TextInputLayout是一个比较简单的控件，不过动画的部分实现的比较复杂，该控价使用起来确实很方便，不过存在一些缺点，以下是我在使用时遇到的一些问题。
 
 1、无法设置/获取上面文字的颜色，大小，间距等，下面的错误提示内容也是一样无法设置。
 
@@ -439,6 +439,6 @@ TextInputLayout是一个比较简单的控件，不过动画的部分实现的�
 
 3、显示错误提示后高度会变化。
 
-4、显示文字个数会，超出后闪退。
+4、显示文字个数，超出数量后闪退。
 
-5、如果包含的edittext有android:layout_marginLeft="10dp" ，这样布局有问题，这个修改有做备注。
+5、如果包含的edittext有android:layout_marginLeft="10dp" ，这样布局有问题，这个修改在代码里有做备注。
